@@ -3,20 +3,20 @@
 #define JOYSTICK_RANGE 1023
 
 //motor direction pins
-#define rfpos A5
-#define rfneg A2
-#define rbpos A1
-#define rbneg 5
-#define lfpos 11
-#define lfneg 10
-#define lbpos 9
-#define lbneg 6
+#define rfpos 11
+#define rfneg 10
+#define rbpos 9
+#define rbneg 6
+#define lfpos 5
+#define lfneg A5
+#define lbpos A2
+#define lbneg A1
 
 //motor speed pins
 #define pwmrf 13
 #define pwmrb 12
-#define pwmlf A3
-#define pwmlb A4
+#define pwmlf A4
+#define pwmlb A3
 
 void setDirection(char motor, bool direction);
 void setSpeed(int pwmr, int pwml);
