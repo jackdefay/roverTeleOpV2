@@ -1,16 +1,17 @@
 #include <Arduino.h>
+#include <Wire.h>
 
 #define JOYSTICK_RANGE 1023
 
 //motor direction pins
-#define rfpos 11
-#define rfneg 10
+#define rfpos 10
+#define rfneg 11
 #define rbpos 9
 #define rbneg 6
-#define lfpos 5
-#define lfneg A5
-#define lbpos A2
-#define lbneg A1
+#define lfpos A5
+#define lfneg 5
+#define lbpos A1
+#define lbneg A2
 
 //motor speed pins
 #define pwmrf 13
@@ -18,6 +19,7 @@
 #define pwmlf A4
 #define pwmlb A3
 
+void receiveEvent(int howMany);
 void setDirection(char motor, bool direction);
 void setSpeed(int pwmr, int pwml);
 int clip(int num);
@@ -25,7 +27,8 @@ int clip(int num);
 void setup() {
   Serial.begin(115200);
 
-  Serial.println("starting");
+  Wire.begin(8);                // join i2c bus with address #8
+  Wire.onReceive(receiveEvent); // register event
 
   //motor pins
   pinMode(rfpos, OUTPUT);
@@ -47,11 +50,20 @@ void setup() {
 }
 
 void loop(){
-  setSpeed(255, 255);
+  delay(10);
+}
+
+void receiveEvent(int howMany) {  //format *power1 power2
+  char c = Wire.read();
+  if(c == '*'){
+    int rightSpeed = Wire.read();    // receive byte as an integer
+    int leftSpeed = Wire.read();
+    setSpeed(rightSpeed, leftSpeed);
+  }
 }
 
 void setDirection(char motor, bool direction){  //1 = forwards, 0 = backwards
-  Serial.print("setting direction to "); Serial.println(direction);
+  //Serial.print("setting direction to "); Serial.println(direction);
   if(motor == 'r'){
     digitalWrite(rfpos, (int) direction);
     digitalWrite(rfneg, (int) !direction);
@@ -76,7 +88,7 @@ void setSpeed(int pwmr, int pwml){
   pwmr = clip(pwmr);
   pwml = clip(pwml);
 
-  Serial.print("the values being written to the motors are: "); Serial.print(pwmr); Serial.print(", "); Serial.println(pwml);
+  //Serial.print("the values being written to the motors are: "); Serial.print(pwmr); Serial.print(", "); Serial.println(pwml);
 
   analogWrite(pwmrf, pwmr);
   analogWrite(pwmrb, pwmr);
@@ -85,7 +97,7 @@ void setSpeed(int pwmr, int pwml){
 }
 
 int clip(int num){
-  if(num>=-100 && num<=100) return 0;
+  if(num>=-20 && num<=20) return 0;
   if(num>=0 && num<=255) return num;
   else if(num>=-255 && num<0) return -num;
   else if(num>255 || num<-255) return 255;
