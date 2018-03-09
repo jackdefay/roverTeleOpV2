@@ -19,7 +19,7 @@
 #define pwmlf A4
 #define pwmlb A3
 
-void receiveEvent(int howMany);
+void receiveEvent(int numBytes);
 void setDirection(char motor, bool direction);
 void setSpeed(int pwmr, int pwml);
 int clip(int num);
@@ -53,12 +53,22 @@ void loop(){
   delay(10);
 }
 
-void receiveEvent(int howMany) {  //format *power1 power2
+void receiveEvent(int numBytes) {  //format *power1 power2
   char c = Wire.read();
   if(c == '*'){
+    int signRight = Wire.read();
     int rightSpeed = Wire.read();    // receive byte as an integer
+    int signLeft = Wire.read();
     int leftSpeed = Wire.read();
+    if(signRight == 0) rightSpeed *= -1;
+    if(signLeft == 0) leftSpeed *= -1;
     setSpeed(rightSpeed, leftSpeed);
+    Serial.print(rightSpeed); Serial.print(", "); Serial.println(leftSpeed);
+  }
+  else{
+    while(Wire.available()){
+      Wire.read();
+    }
   }
 }
 
