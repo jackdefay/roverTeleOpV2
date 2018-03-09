@@ -160,7 +160,7 @@ void convertJoystickData(int coords[]){
   if(coords[0] > 255) coords[0] = 255;
   if(coords[0] < -255) coords[0] = -255;
   if(coords[1] > 255) coords[1] = 255;
-  if(coords[1] < -255) coords[1] = 255;
+  if(coords[1] < -255) coords[1] = -255;
 }
 
 void setHapticPower(int level){
