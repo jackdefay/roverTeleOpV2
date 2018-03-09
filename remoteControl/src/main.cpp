@@ -90,7 +90,7 @@ void loop() {
   // static unsigned long currentMillis, previousMillis;
 
   convertJoystickData(coords);
-  Serial.print(coords[0]); Serial.print(", "); Serial.println(coords[1]);
+  //Serial.print(coords[0]); Serial.print(", "); Serial.println(coords[1]);
   sendJoystickData(coords[0], coords[1]);
 
   //listens for haptic data
@@ -112,6 +112,7 @@ void loop() {
           }
 
           level = (int) stringLevel.toInt();
+          Serial.println(level);
           setHapticPower(level);  //sets the haptic motor to the received power level
       }
   }
