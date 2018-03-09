@@ -115,18 +115,24 @@ void loop() {
 
    currentMillis = millis();
    if(currentMillis - previousMillis > 100) writeSpeed(0, 0);
-   delay(100);                                                  //change this after done testing
+   delay(10);                                                  //change this after done testing
 }
 
 void writeSpeed(int rightSpeed, int leftSpeed){
   Wire.beginTransmission(8);  // transmit to device #8
   Wire.write('*');            // send indicator
   if(rightSpeed>=0) Wire.write(1);
-  else Wire.write(0);
-  Wire.write(abs(rightSpeed));     // sends rightSpeed
+  else{
+    Wire.write(0);
+    rightSpeed *= -1;
+  }
+  Wire.write((byte) rightSpeed);     // sends rightSpeed
   if(leftSpeed>=0) Wire.write(1);
-  else Wire.write(0);
-  Wire.write(abs(leftSpeed));      // sends LeftSpeed
+  else{
+    Wire.write(0);
+    leftSpeed *= -1;
+  }
+  Wire.write((byte) leftSpeed);      // sends LeftSpeed
   Wire.endTransmission();     // stop transmitting
 }
 
