@@ -99,6 +99,8 @@ void loop() {
         level = getUltrasonicDistance();
         sendLevel(level);
 
+        Serial.println(level);
+
         previousMillis = millis();  //reset timer
 
         digitalWrite(13, HIGH);
