@@ -47,6 +47,7 @@ void setup() {
   //set motors to forwards
   setDirection('r', true);
   setDirection('l', true);
+  setSpeed(0,0);
 }
 
 void loop(){
@@ -98,7 +99,7 @@ void setSpeed(int pwmr, int pwml){
   pwmr = clip(pwmr);
   pwml = clip(pwml);
 
-  //Serial.print("the values being written to the motors are: "); Serial.print(pwmr); Serial.print(", "); Serial.println(pwml);
+  Serial.print("the values being written to the motors are: "); Serial.print(pwmr); Serial.print(", "); Serial.println(pwml);
 
   analogWrite(pwmrf, pwmr);
   analogWrite(pwmrb, pwmr);

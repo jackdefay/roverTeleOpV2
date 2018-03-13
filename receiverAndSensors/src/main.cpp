@@ -90,7 +90,7 @@ void loop() {
         xcoordint = (int) xcoord.toInt();
         ycoordint = (int) ycoord.toInt();
 
-        //Serial.print(xcoordint); Serial.print(", "); Serial.println(ycoordint);
+        Serial.print(xcoordint); Serial.print(", "); Serial.println(ycoordint);
 
         writeSpeed(xcoordint, ycoordint);
         Serial.print(xcoordint); Serial.print(", "); Serial.println(ycoordint);
@@ -99,7 +99,7 @@ void loop() {
         level = getUltrasonicDistance();
         sendLevel(level);
 
-        Serial.println(level);
+        // Serial.println(level);
 
         previousMillis = millis();  //reset timer
 
@@ -149,7 +149,7 @@ int getUltrasonicDistance(){
   digitalWrite(trigPin, LOW);
 
   pinMode(echoPin, INPUT);
-  duration = pulseIn(echoPin, HIGH);
+  duration = pulseIn(echoPin, HIGH, 6000);
 
   distanceCm = (double) duration * 0.01715;
 
