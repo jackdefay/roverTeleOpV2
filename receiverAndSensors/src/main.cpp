@@ -53,17 +53,20 @@ void setup() {
 
     pinMode(LED, OUTPUT);
 
-    //ultrasonic pins
-    // pinMode(trigPin, OUTPUT);
-    // pinMode(echoPin, INPUT);
+    // ultrasonic pins
+    pinMode(trigPin, OUTPUT);
+    pinMode(echoPin, INPUT);
 }
 
 void loop() {
   String word, xcoord, ycoord;
   char temp[20];
-  int i = 0, xcoordint, ycoordint;//, pwmr = 0, pwml = 0;
+  int i = 0, xcoordint, ycoordint;
   static unsigned long previousMillis = 0, currentMillis = 0;
   int level;
+
+  // level = getUltrasonicDistance();
+  // Serial.println(level);
 
   if (rf69.available()) {
       uint8_t buf[RH_RF69_MAX_MESSAGE_LEN];
@@ -90,10 +93,10 @@ void loop() {
         xcoordint = (int) xcoord.toInt();
         ycoordint = (int) ycoord.toInt();
 
-        Serial.print(xcoordint); Serial.print(", "); Serial.println(ycoordint);
+        // Serial.print(xcoordint); Serial.print(", "); Serial.println(ycoordint);
 
         writeSpeed(xcoordint, ycoordint);
-        Serial.print(xcoordint); Serial.print(", "); Serial.println(ycoordint);
+        // Serial.print(xcoordint); Serial.print(", "); Serial.println(ycoordint);
 
         //after setting the speed of the motors, sends ultrasonic data back for haptics
         level = getUltrasonicDistance();
@@ -117,7 +120,7 @@ void loop() {
 
    currentMillis = millis();
    if(currentMillis - previousMillis > 100) writeSpeed(0, 0);
-   delay(10);                                                  //change this after done testing
+   delay(100);                                                  //change this after done testing
 }
 
 void writeSpeed(int rightSpeed, int leftSpeed){
@@ -141,6 +144,9 @@ void writeSpeed(int rightSpeed, int leftSpeed){
 int getUltrasonicDistance(){
   long duration;
   double distanceCm;
+  // unsigned long sendTimeMicros, receiveTimeMicros, timeoutTimer = 0;
+
+  // sendTimeMicros = micros();
 
   digitalWrite(trigPin, LOW);
   delayMicroseconds(5);
@@ -149,11 +155,25 @@ int getUltrasonicDistance(){
   digitalWrite(trigPin, LOW);
 
   pinMode(echoPin, INPUT);
-  duration = pulseIn(echoPin, HIGH, 6000);
+  duration = pulseIn(echoPin, HIGH, 7000);  //experimentally determined timeout results in a max distance of about 1 meter, anything else is overkill and this prevents the reading from taking too long
+  // sendTimeMicros = micros();
+  // while(digitalRead(echoPin) == 0 && timeoutTimer < 2000){
+  //   timeoutTimer = micros() - sendTimeMicros;
+  // }
+  // timeoutTimer = 0;
+  // while(digitalRead(echoPin) == 1 && timeoutTimer < 6000){
+  //   timeoutTimer = micros() - sendTimeMicros;
+  // }
+  //
+  // receiveTimeMicros = micros();
+  // duration = sendTimeMicros-receiveTimeMicros;
 
   distanceCm = (double) duration * 0.01715;
 
-  if(distanceCm < 20) return 5;
+  Serial.println(distanceCm);
+
+  if(distanceCm == 0) return 0;
+  else if(distanceCm < 20) return 5;
   else if(distanceCm < 40) return 4;
   else if(distanceCm < 60) return 3;
   else if(distanceCm < 80) return 2;

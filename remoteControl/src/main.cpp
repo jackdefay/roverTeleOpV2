@@ -74,9 +74,9 @@ void setup() {
   drv.setMode(DRV2605_MODE_INTTRIG);
 
   //blink led on startup
-  delay(1000);
-  digitalWrite(13, HIGH);
   delay(500);
+  digitalWrite(13, HIGH);
+  delay(250);
   digitalWrite(13, LOW);
 }
 
@@ -87,10 +87,12 @@ void loop() {
   int i, level;
   String word, stringLevel;
   char temp[20];
-  // static unsigned long currentMillis, previousMillis;
+  static unsigned long currentMillis, previousMillis = 0, timeSinceHaptic = 0;
+
+  currentMillis = millis();
 
   convertJoystickData(coords);
-  Serial.print(coords[0]); Serial.print(", "); Serial.println(coords[1]);
+  // Serial.print(coords[0]); Serial.print(", "); Serial.println(coords[1]);
   sendJoystickData(coords[0], coords[1]);
 
   //listens for haptic data
@@ -112,10 +114,19 @@ void loop() {
           }
 
           level = (int) stringLevel.toInt();
+          timeSinceHaptic = millis();
           Serial.println(level);
-          setHapticPower(level);  //sets the haptic motor to the received power level
       }
   }
+
+  if(currentMillis - timeSinceHaptic >= 100) setHapticPower(0);
+
+  else if(currentMillis - previousMillis >= 100){
+    setHapticPower(level);
+    previousMillis = currentMillis;
+  }
+
+
 }
 
 void sendJoystickData(int x, int y){
